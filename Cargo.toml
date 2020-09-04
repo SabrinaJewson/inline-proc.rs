@@ -1,0 +1,36 @@
+[package]
+name = "inline-proc"
+version = "0.1.0"
+authors = ["KaiJewson <kai.jewson@gmail.com>"]
+edition = "2018"
+description = "Inline procedural macros"
+readme = "README.md"
+repository = "https://github.com/KaiJewson/inline-proc"
+license = "MIT OR Apache-2.0"
+keywords = ["inline", "procedural", "macro"]
+categories = ["development-tools", "development-tools::build-utils", "development-tools::procedural-macro-helpers", "rust-patterns"]
+
+[dependencies]
+cargo_metadata = "0.11.1"
+cargo_toml = "0.8.1"
+libloading = "0.6.3"
+once_cell = "1.4.1"
+proc-macro-error = "1.0.4"
+proc-macro2 = "1.0.20"
+quote = "1.0.7"
+serde = { version = "1.0.115", features = ["derive"] }
+syn = { version = "1.0.39", features = ["full"] }
+toml = "0.5.6"
+
+ron = { version = "0.6.1", optional = true }
+serde_json = { version = "1.0.57", optional = true }
+
+[features]
+json = ["serde_json"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[lib]
+path = "src/lib.rs"
+proc-macro = true
