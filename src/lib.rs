@@ -4,7 +4,7 @@
 //! [Repo](https://github.com/KaiJewson/inline-proc) - [crates.io](https://crates.io/crates/inline-proc) - [documentation](https://docs.rs/inline-proc)
 //!
 //! # Example
-//! ```rust
+//! ```
 //! use inline_proc::inline_proc;
 //!
 //! #[inline_proc]
@@ -77,15 +77,15 @@
 //!     use proc_macro::TokenStream;
 //!
 //!     pub fn my_bang_macro(_input: TokenStream) -> TokenStream {
-//!         # return TokenStream::new();
+//! #       return TokenStream::new();
 //!         todo!()
 //!     }
 //!     pub fn my_derive_macro(_item: TokenStream) -> TokenStream {
-//!         # return TokenStream::new();
+//! #       return TokenStream::new();
 //!         todo!()
 //!     }
 //!     pub fn my_attribute_macro(_attr: TokenStream, _item: TokenStream) -> TokenStream {
-//!         # return TokenStream::new();
+//! #       return TokenStream::new();
 //!         todo!()
 //!     }
 //! }
@@ -217,7 +217,7 @@ mod invoke;
 ///
 /// ## Metadata Options
 ///
-/// ```rust
+/// ```
 /// use inline_proc::inline_proc;
 ///
 /// #[inline_proc]

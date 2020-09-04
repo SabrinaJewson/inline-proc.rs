@@ -79,15 +79,12 @@ mod direct_usage {
     use proc_macro::TokenStream;
 
     pub fn my_bang_macro(_input: TokenStream) -> TokenStream {
-        # return TokenStream::new();
         todo!()
     }
     pub fn my_derive_macro(_item: TokenStream) -> TokenStream {
-        # return TokenStream::new();
         todo!()
     }
     pub fn my_attribute_macro(_attr: TokenStream, _item: TokenStream) -> TokenStream {
-        # return TokenStream::new();
         todo!()
     }
 }
