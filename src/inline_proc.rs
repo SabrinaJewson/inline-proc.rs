@@ -188,8 +188,6 @@ fn parse_mod(module: ItemMod) -> (String, Metadata, TokenStream) {
         _ => abort!(module.mod_token, "Missing metadata information"),
     };
 
-    eprintln!("SOURCE: {}", metadata_source.tokens);
-
     let metadata: Metadata = match metadata_format {
         #[cfg(feature = "json")]
         format if format == "json" => serde_json::from_str(&metadata_source.tokens)
