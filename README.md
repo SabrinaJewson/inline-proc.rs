@@ -12,7 +12,7 @@ use inline_proc::inline_proc;
 #[inline_proc]
 mod example {
     metadata::ron!(
-        edition: "2018",
+        edition: "2021",
         clippy: true,
         dependencies: {
             "quote": "1",
@@ -68,7 +68,7 @@ use inline_proc::inline_proc;
 #[inline_proc]
 mod direct_usage {
     metadata::ron!(
-        edition: "2018",
+        edition: "2021",
         dependencies: {},
         exports: (
             bang_macros: { "my_bang_macro": "my_bang_macro" },
@@ -142,6 +142,32 @@ macro_rules! my_macro {
 
 This level of indirection is necessary as proc macros don't have a way of getting the current
 crate like MBEs do (`$crate`), so you have to supply it via the MBE method.
+
+## Crate attributes
+
+Inline procedural macros support inner crate attributes.
+
+```rust
+use inline_proc::inline_proc;
+
+#[inline_proc]
+mod crate_attributes {
+   #![feature(box_syntax)]
+
+    metadata::ron!(
+        edition: "2021",
+        dependencies: {},
+        exports: (bang_macros: { "my_bang_macro": "my_bang_macro" }),
+    );
+
+    use proc_macro::TokenStream;
+
+    pub fn my_bang_macro(_input: TokenStream) -> TokenStream {
+       *box TokenStream::new()
+    }
+}
+my_bang_macro!(input tokens);
+```
 
 ## Caveats
 
