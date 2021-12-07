@@ -19,7 +19,9 @@ use quote::{format_ident, quote, ToTokens};
 use serde::de::{self, Deserializer, Unexpected, Visitor};
 use serde::Deserialize;
 use syn::parse_macro_input;
-use syn::{Ident, Item, ItemMacro, ItemMod, MacroDelimiter, Path as RustPath, Visibility};
+use syn::{
+    AttrStyle, Ident, Item, ItemMacro, ItemMod, MacroDelimiter, Path as RustPath, Visibility,
+};
 
 static TEMP_DIR: Lazy<PathBuf> = Lazy::new(env::temp_dir);
 static CRATES_DIR: Lazy<PathBuf> = Lazy::new(|| TEMP_DIR.join("inline-proc-crates"));
@@ -27,7 +29,7 @@ static CRATES_DIR: Lazy<PathBuf> = Lazy::new(|| TEMP_DIR.join("inline-proc-crate
 pub(super) fn inline_proc(input: TokenStream1) -> TokenStream1 {
     let (mod_name, metadata, content) = parse_mod(parse_macro_input!(input));
 
-    let lib_rs = TokenString::from_tokens(generate_lib_rs(&metadata, &mod_name, content));
+    let lib_rs = TokenString::from_tokens(generate_lib_rs(&metadata, content));
     let cargo_toml = generate_cargo_toml(&metadata);
 
     let crate_root = CRATES_DIR.join(format!("{}-{}", CrateIdentifier, mod_name));
@@ -219,6 +221,11 @@ fn parse_mod(module: ItemMod) -> (String, Metadata, TokenStream) {
     #[allow(unreachable_code)]
     let content = {
         let mut content = TokenStream::new();
+        for attr in module.attrs {
+            if let AttrStyle::Inner(_) = attr.style {
+                attr.to_tokens(&mut content);
+            }
+        }
         for item in module_content {
             item.to_tokens(&mut content);
         }
@@ -447,52 +454,45 @@ lib={{crate-type=['dylib'],path='lib.rs'}}
     )
 }
 
-fn generate_lib_rs(metadata: &Metadata, mod_name: &str, code: TokenStream) -> TokenStream {
-    let mod_name = Ident::new(mod_name, Span::call_site());
-
-    let mut lib_rs = quote!(
-        use proc_macro::TokenStream;
+fn generate_lib_rs(metadata: &Metadata, mut code: TokenStream) -> TokenStream {
+    code.extend(quote!(
         extern crate proc_macro;
-    );
+    ));
 
     for (name, mac) in &metadata.exports.bang_macros {
         let function = &mac.function.0;
-        let name = format_ident!("bang_{}", name.0);
-        lib_rs.extend(quote! {
+        let name = format_ident!("__exported_macro_bang_{}", name.0);
+        code.extend(quote! {
             #[no_mangle]
-            pub fn #name(input: TokenStream) -> TokenStream {
-                #mod_name::#function(input)
+            pub fn #name(input: ::proc_macro::TokenStream) -> ::proc_macro::TokenStream {
+                #function(input)
             }
         });
     }
+
     for (name, mac) in &metadata.exports.derives {
         let function = &mac.function.0;
-        let name = format_ident!("derive_{}", name.0);
-        lib_rs.extend(quote! {
+        let name = format_ident!("__exported_macro_derive_{}", name.0);
+        code.extend(quote! {
             #[no_mangle]
-            pub fn #name(item: TokenStream) -> TokenStream {
-                #mod_name::#function(item)
+            pub fn #name(item: ::proc_macro::TokenStream) -> ::proc_macro::TokenStream {
+                #function(item)
             }
         });
     }
+
     for (name, mac) in &metadata.exports.attributes {
         let function = &mac.function.0;
-        let name = format_ident!("attribute_{}", name.0);
-        lib_rs.extend(quote! {
+        let name = format_ident!("__exported_macro_attribute_{}", name.0);
+        code.extend(quote! {
             #[no_mangle]
-            pub fn #name(attr: TokenStream, item: TokenStream) -> TokenStream {
-                #mod_name::#function(attr, item)
+            pub fn #name(attr: ::proc_macro::TokenStream, item: ::proc_macro::TokenStream) -> ::proc_macro::TokenStream {
+                #function(attr, item)
             }
         });
     }
 
-    lib_rs.extend(quote! {
-        mod #mod_name {
-            #code
-        }
-    });
-
-    lib_rs
+    code
 }
 
 fn cargo_diagnostic_to_diagnostic(cargo: CargoDiagnostic, source: &TokenString) -> Diagnostic {

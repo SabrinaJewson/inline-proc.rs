@@ -10,7 +10,7 @@
 //! #[inline_proc]
 //! mod example {
 //!     metadata::ron!(
-//!         edition: "2018",
+//!         edition: "2021",
 //!         clippy: true,
 //!         dependencies: {
 //!             "quote": "1",
@@ -66,7 +66,7 @@
 //! #[inline_proc]
 //! mod direct_usage {
 //!     metadata::ron!(
-//!         edition: "2018",
+//!         edition: "2021",
 //!         dependencies: {},
 //!         exports: (
 //!             bang_macros: { "my_bang_macro": "my_bang_macro" },
@@ -104,7 +104,7 @@
 //! # #[inline_proc]
 //! # mod indirect_usage {
 //! #     metadata::ron!(
-//! #         edition: "2018",
+//! #         edition: "2021",
 //! #         dependencies: {},
 //! #         exports: (
 //! #             derives: { "MyDeriveMacro": "my_derive_macro" },
@@ -147,7 +147,7 @@
 //! # #[inline_proc::inline_proc]
 //! # mod macro_export {
 //! #     metadata::ron!(
-//! #         edition: "2018",
+//! #         edition: "2021",
 //! #         dependencies: {},
 //! #         exports: (
 //! #             bang_macros: { "my_macro": ( function: "my_macro", export: true ) },
@@ -175,6 +175,32 @@
 //!
 //! This level of indirection is necessary as proc macros don't have a way of getting the current
 //! crate like MBEs do (`$crate`), so you have to supply it via the MBE method.
+//!
+//! # Crate attributes
+//!
+//! Inline procedural macros support inner crate attributes.
+//!
+//! ```
+//! use inline_proc::inline_proc;
+//!
+//! #[inline_proc]
+//! mod crate_attributes {
+//!    #![feature(box_syntax)]
+//!
+//!     metadata::ron!(
+//!         edition: "2021",
+//!         dependencies: {},
+//!         exports: (bang_macros: { "my_bang_macro": "my_bang_macro" }),
+//!     );
+//!
+//!     use proc_macro::TokenStream;
+//!
+//!     pub fn my_bang_macro(_input: TokenStream) -> TokenStream {
+//!        *box TokenStream::new()
+//!     }
+//! }
+//! my_bang_macro!(input tokens);
+//! ```
 //!
 //! # Caveats
 //!
@@ -235,7 +261,7 @@ mod invoke;
 ///         clippy: true,
 ///
 ///         // The edition to use. Default is 2015 edition.
-///         edition: "2018",
+///         edition: "2021",
 ///
 ///         // The dependencies of the proc macro. This is in the same format as Cargo.toml's
 ///         // `[dependencies]` section.

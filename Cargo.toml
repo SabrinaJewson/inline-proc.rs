@@ -2,7 +2,7 @@
 name = "inline-proc"
 version = "0.1.0"
 authors = ["KaiJewson <kai.jewson@gmail.com>"]
-edition = "2018"
+edition = "2021"
 description = "Inline procedural macros"
 readme = "README.md"
 repository = "https://github.com/KaiJewson/inline-proc"

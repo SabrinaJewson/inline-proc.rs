@@ -82,7 +82,7 @@ unsafe fn library_macro<'lib, T>(
     macro_type: &str,
     macro_name: Ident,
 ) -> Symbol<'lib, T> {
-    let symbol_name = format!("{}_{}\0", macro_type, macro_name);
+    let symbol_name = format!("__exported_macro_{}_{}\0", macro_type, macro_name);
 
     #[allow(unused_unsafe)]
     let symbol = unsafe { library.get::<T>(symbol_name.as_bytes()) };
