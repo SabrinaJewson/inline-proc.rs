@@ -1,11 +1,10 @@
 [package]
 name = "inline-proc"
 version = "0.1.0"
-authors = ["KaiJewson <kai.jewson@gmail.com>"]
 edition = "2021"
 description = "Inline procedural macros"
 readme = "README.md"
-repository = "https://github.com/KaiJewson/inline-proc"
+repository = "https://github.com/SabrinaJewson/inline-proc"
 license = "MIT OR Apache-2.0"
 keywords = ["inline", "procedural", "macro"]
 categories = ["development-tools", "development-tools::build-utils", "development-tools::procedural-macro-helpers", "rust-patterns"]

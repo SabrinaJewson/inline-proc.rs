@@ -3,7 +3,7 @@
 This crate provides the ability to write procedural macros directly in your code, instead of
 having to use another crate.
 
-[Repo](https://github.com/KaiJewson/inline-proc) - [crates.io](https://crates.io/crates/inline-proc) - [documentation](https://docs.rs/inline-proc)
+[Repo](https://github.com/SabrinaJewson/inline-proc) - [crates.io](https://crates.io/crates/inline-proc) - [documentation](https://docs.rs/inline-proc)
 
 ## Example
 ```rust
